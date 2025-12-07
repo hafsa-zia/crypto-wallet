@@ -20,8 +20,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-transparent">
-      <div className="w-full max-w-xs px-4">
+   <div className="auth-shell bg-transparent">
+      <div className="auth-card px-4">
         <div className="glass-card-soft space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold text-white">Welcome Back</h1>

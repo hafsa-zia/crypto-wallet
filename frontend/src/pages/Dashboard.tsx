@@ -75,7 +75,8 @@ export default function Dashboard() {
   };
 
   return (
-      <div className="flex flex-col gap-6 max-w-3xl w-full mx-auto">
+      <div className="main-column">
+    
       {/* Header */}
       <div className="glass-card-soft px-6 py-5">
         <h1 className="text-2xl font-semibold text-white">Dashboard</h1>

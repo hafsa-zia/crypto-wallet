@@ -73,7 +73,7 @@ export default function TxHistory() {
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl w-full mx-auto">
+    <div className="main-column">
       {/* Header */}
       <div className="glass-card-soft">
         <div className="flex items-start justify-between gap-3">

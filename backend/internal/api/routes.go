@@ -11,6 +11,7 @@ func RegisterRoutes(r *gin.Engine) {
 	api := r.Group("/api")
 
 	// Auth
+	api.POST("/auth/request-otp", RequestOTPHandler) // ✅ new
 	api.POST("/auth/register", Register)
 	api.POST("/auth/login", Login)
 
@@ -36,6 +37,7 @@ func RegisterRoutes(r *gin.Engine) {
 	// Zakat
 	protected.POST("/admin/run-zakat", RunZakatNowHandler)
 	protected.GET("/reports/summary", GetReportsSummary)
+
 	// Logs
 	protected.GET("/logs/system", GetSystemLogs)
 	protected.GET("/logs/transactions", GetTxLogs)

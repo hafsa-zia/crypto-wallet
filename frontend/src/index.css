@@ -157,8 +157,10 @@ textarea:focus {
   flex: 1;
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: auto; /* allow wide tables to scroll instead of clipping */
 }
+
+
 
 .page-inner {
   max-width: 980px; /* was 1120px */
@@ -318,4 +320,28 @@ textarea:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(34, 197, 94, 0.85); /* emerald-500 */
+}
+/* ========= MAIN CONTENT COLUMN ========= */
+
+.main-column {
+  max-width: 880px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ========= AUTH PAGES (LOGIN / REGISTER) ========= */
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 360px;
 }

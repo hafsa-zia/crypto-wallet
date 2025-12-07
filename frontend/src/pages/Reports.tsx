@@ -41,7 +41,7 @@ export default function Reports() {
     typeof val === "number" ? val.toFixed(4) : "0.0000";
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl w-full mx-auto">
+    <div className="main-column">
 
       {/* Header */}
       <div className="glass-card-soft">

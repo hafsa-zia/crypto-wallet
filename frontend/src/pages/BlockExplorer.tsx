@@ -38,7 +38,7 @@ export default function BlockExplorer() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl w-full mx-auto">
+    <div className="main-column">
 
       {/* Header */}
       <div className="glass-card-soft">
