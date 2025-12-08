@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -13,7 +15,7 @@ export default function Login() {
     setError("");
     try {
       await login(email, password);
-      window.location.href = "/dashboard";
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err?.response?.data?.error || "Login failed");
     }
@@ -70,12 +72,12 @@ export default function Login() {
 
           <p className="text-center text-[11px] text-slate-500">
             Don&apos;t have an account?{" "}
-            <a
-              href="/register"
+            <Link
+              to="/register"
               className="text-emerald-400 hover:text-emerald-300 underline underline-offset-4"
             >
               Create wallet
-            </a>
+            </Link>
           </p>
         </div>
       </div>

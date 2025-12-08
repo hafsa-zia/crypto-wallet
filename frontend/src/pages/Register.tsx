@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/client";
 
 export default function Register() {
@@ -187,12 +188,12 @@ export default function Register() {
 
           <p className="text-center text-[11px] text-slate-500">
             Already have an account?{" "}
-            <a
-              href="/login"
+            <Link
+              to="/login"
               className="text-emerald-400 hover:text-emerald-300 underline underline-offset-4"
             >
               Login
-            </a>
+            </Link>
           </p>
         </div>
       </div>
