@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hafsa-zia/crypto-wallet-backend/internal/api"
@@ -11,20 +12,33 @@ import (
 )
 
 func main() {
+	// Load config
 	config.LoadConfig()
+
+	// Connect to MongoDB
 	if err := db.ConnectMongo(); err != nil {
-		log.Fatal("failed to connect Mongo:", err)
+		log.Fatal("Failed to connect to MongoDB:", err)
 	}
 
+	// Create Gin router
 	r := gin.Default()
 
-	// Add middlewares: logger + CORS
+	// Middlewares
 	r.Use(middleware.RequestLogger())
 	r.Use(middleware.CORSMiddleware())
 
+	// Health check endpoint
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Backend is running"})
+	})
+
+	// Register API routes
 	api.RegisterRoutes(r)
 
-	if err := r.Run(":8080"); err != nil {
+	// Start server
+	port := ":8080"
+	log.Printf("🚀 Backend is running on port %s", port)
+	if err := r.Run(port); err != nil {
 		log.Fatal(err)
 	}
 }
