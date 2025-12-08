@@ -84,17 +84,20 @@ func CreateTransaction(c *gin.Context) {
 	// load sender keys from DB
 	userCol := db.Col("users")
 	var user models.User
-	_ = userCol.FindOne(ctx, bson.M{"wallet_id": walletID}).Decode(&user)
-
-	privHex, err := appCrypto.DecryptPrivateKey(user.EncryptedPrivKey)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "decrypt key failed"})
+	if err := userCol.FindOne(ctx, bson.M{"wallet_id": walletID}).Decode(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "user not found"})
 		return
 	}
 
-	privKey, pubKey, err := appCrypto.PrivateFromHex(privHex) // implement
+	privHex, err := appCrypto.DecryptPrivateKey(user.EncryptedPrivKey)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid private key"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("decrypt key failed: %v", err)})
+		return
+	}
+
+	privKey, pubKey, err := appCrypto.PrivateFromHex(privHex)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("invalid private key: %v", err)})
 		return
 	}
 	sig, err := appCrypto.SignMessage(privKey, payload)

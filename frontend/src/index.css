@@ -332,16 +332,308 @@ textarea:focus {
   gap: 1.5rem;
 }
 
-/* ========= AUTH PAGES (LOGIN / REGISTER) ========= */
+/* ========= AUTH PAGES FINAL FIX ========= */
 
 .auth-shell {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1.8rem;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 360px;
+  max-width: 440px;      /* Increased width */
+}
+
+.glass-card-soft {
+  padding: 2rem 2rem !important;   /* More space inside card */
+  border-radius: 1.4rem;
+}
+
+/* ===== Labels ===== */
+.auth-card label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+/* ===== Inputs (Reduced Height + More Padding) ===== */
+.auth-card input {
+  width: 100%;
+  height: 36px;                /* Reduced height */
+  padding: 0.4rem 0.65rem;     /* Inner padding so it never touches edges */
+  border-radius: 8px;
+  background-color: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  font-size: 0.83rem;
+  color: #e5e7eb;
+}
+
+/* ===== Field Spacing ===== */
+.auth-card form > div {
+  margin-bottom: 0.65rem;      /* Lighter spacing */
+}
+
+/* ===== Email + OTP Flex Fix ===== */
+.auth-card .flex {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-card .flex input {
+  height: 36px;               /* Same reduced height */
+}
+
+.auth-card .flex button {
+  height: 36px;
+  padding: 0 0.75rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+/* ===== Submit Buttons ===== */
+.auth-card button[type="submit"] {
+  height: 40px;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* ===== Messages ===== */
+.auth-card .msg-box {
+  font-size: 0.8rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+/* ========================================================= */
+/* ================== REGISTER PAGE ONLY ==================== */
+/* ========================================================= */
+
+.register-card {
+  max-width: 460px !important;         /* Wider only for register */
+  padding: 2.2rem 2.2rem !important;   /* More equal spacing */
+}
+
+/* Inputs, Select, Textarea (register only) */
+.register-card input,
+.register-card select,
+.register-card textarea {
+  width: 100%;
+  height: 36px;
+  padding: 0.45rem 0.75rem;            /* More inner padding */
+  border-radius: 8px;
+  background-color: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  font-size: 0.83rem;
+  color: #e5e7eb;
+  box-sizing: border-box;
+}
+
+/* Field spacing (register only) */
+.register-card form > div {
+  margin-bottom: 0.75rem;
+}
+
+/* Textarea size fix */
+.register-card textarea {
+  height: 90px;
+  resize: vertical;
+}
+
+/* Flex boxes (register only) */
+.register-card .flex {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.register-card .flex input {
+  height: 36px;
+}
+
+.register-card .flex button {
+  height: 36px;
+  padding: 0 0.75rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+/* Submit button (register only) */
+.register-card button[type="submit"] {
+  height: 40px;
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
+/* Message box (register only) */
+.register-card .msg-box {
+  font-size: 0.8rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+}
+/* ===== Dashboard Profile – Perfect Field Alignment ===== */
+
+.dashboard-card input {
+  width: 100%;
+  height: 36px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  background-color: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  font-size: 0.83rem;
+  color: #e5e7eb;
+  outline: none;
+  transition: 0.15s;
+}
+
+.dashboard-card input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+}
+
+/* Equal spacing + perfect alignment between the two columns */
+.dashboard-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start; /* Keep boxes aligned at top to avoid overlap */
+}
+
+/* Wallet ID + Email display boxes */
+.dashboard-box {
+  background-color: rgba(15, 23, 42, 0.70);
+  border: 1px solid rgba(51, 65, 85, 0.80);
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  font-size: 11px;
+  color: #cbd5e1;
+  word-break: break-all;
+}
+
+/* Email change box wrapper */
+.dashboard-email-box {
+  background-color: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(51, 65, 85, 0.75);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+/* Uniform buttons */
+.dashboard-btn {
+  height: 36px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+/* Ensure inputs and buttons inside the email change box stack and don't overlap */
+.dashboard-email-box .dashboard-input,
+.dashboard-email-box input[type="email"],
+.dashboard-email-box input[type="text"],
+.dashboard-email-box input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 0.5rem 0;
+}
+
+.dashboard-email-box .dashboard-btn,
+.dashboard-email-box .btn-primary {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.25rem;
+}
+
+/* Small tweak to prevent button text wrapping and clipping */
+.dashboard-email-box .btn-primary {
+  white-space: normal;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+/* Save button container spacing + responsive stacking */
+.dashboard-card .save-actions {
+  margin-top: 1.25rem; /* push the save button down */
+  padding-top: 0.25rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.dashboard-card .save-actions .dashboard-btn {
+  min-width: 150px;
+}
+
+@media (max-width: 640px) {
+  .dashboard-card .save-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .dashboard-card .save-actions .dashboard-btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Container wrapper for the profile card to prevent overflow */
+.dashboard-card {
+  box-sizing: border-box;
+  width: 100%;
+  overflow: visible;
+}
+
+/* Input helper used in Dashboard.tsx */
+.dashboard-input {
+  width: 100%;
+  height: 36px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  background-color: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  font-size: 0.83rem;
+  color: #e5e7eb;
+  box-sizing: border-box;
+}
+
+/* Ensure boxes scale nicely on very small screens */
+@media (max-width: 520px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .dashboard-email-box {
+    padding: 0.75rem;
+  }
+}
+
+/* ===== Quick Stats ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.stat-box {
+  background-color: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  border-radius: 10px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  justify-content: center;
+  min-height: 68px;
+}
+
+@media (max-width: 520px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }

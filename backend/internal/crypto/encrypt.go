@@ -3,39 +3,34 @@ package crypto
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	crand "crypto/rand"
 	"encoding/hex"
-	"encoding/pem"
 	"errors"
 	"io"
 
 	"github.com/hafsa-zia/crypto-wallet-backend/internal/config"
 )
 
+// GenerateKeyPair generates an ECDSA P-256 keypair and returns
+// the public key (hex of X||Y) and private scalar D as hex.
 func GenerateKeyPair() (string, string, error) {
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
+	priv, err := ecdsa.GenerateKey(elliptic.P256(), crand.Reader)
 	if err != nil {
 		return "", "", err
 	}
 
-	privBytes := x509.MarshalPKCS1PrivateKey(key)
-	privPem := pem.EncodeToMemory(&pem.Block{
-		Type:  "RSA PRIVATE KEY",
-		Bytes: privBytes,
-	})
+	// private scalar D as hex
+	privHex := hex.EncodeToString(priv.D.Bytes())
 
-	pubBytes, err := x509.MarshalPKIXPublicKey(&key.PublicKey)
-	if err != nil {
-		return "", "", err
-	}
-	pubPem := pem.EncodeToMemory(&pem.Block{
-		Type:  "RSA PUBLIC KEY",
-		Bytes: pubBytes,
-	})
+	// public key bytes: X||Y
+	xBytes := priv.PublicKey.X.Bytes()
+	yBytes := priv.PublicKey.Y.Bytes()
+	pubBytes := append(xBytes, yBytes...)
+	pubHex := hex.EncodeToString(pubBytes)
 
-	return string(pubPem), string(privPem), nil
+	return pubHex, privHex, nil
 }
 
 func getAESKey() ([]byte, error) {
@@ -49,6 +44,9 @@ func getAESKey() ([]byte, error) {
 	return keyBytes, nil
 }
 
+// EncryptPrivateKey expects the private key as a hex string (plaintext hex),
+// decodes it and encrypts the raw bytes with AES-GCM. It returns the ciphertext
+// as a hex string (nonce + ciphertext).
 func EncryptPrivateKey(plainHex string) (string, error) {
 	key, err := getAESKey()
 	if err != nil {
@@ -71,7 +69,7 @@ func EncryptPrivateKey(plainHex string) (string, error) {
 	}
 
 	nonce := make([]byte, gcm.NonceSize())
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+	if _, err := io.ReadFull(crand.Reader, nonce); err != nil {
 		return "", err
 	}
 
@@ -79,6 +77,8 @@ func EncryptPrivateKey(plainHex string) (string, error) {
 	return hex.EncodeToString(ciphertext), nil
 }
 
+// DecryptPrivateKey takes the hex-encoded ciphertext (nonce + ciphertext),
+// decrypts it using AES-GCM and returns the original private key as hex string.
 func DecryptPrivateKey(encHex string) (string, error) {
 	key, err := getAESKey()
 	if err != nil {
@@ -111,5 +111,7 @@ func DecryptPrivateKey(encHex string) (string, error) {
 		return "", err
 	}
 
+	// Return the private key as hex string so callers (PrivateFromHex)
+	// can reconstruct the ECDSA private key.
 	return hex.EncodeToString(plain), nil
 }

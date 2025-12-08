@@ -18,6 +18,9 @@ func RegisterRoutes(r *gin.Engine) {
 	// Protected routes
 	protected := api.Group("/")
 	protected.Use(middleware.JWTAuth())
+	// Profile
+	protected.GET("/profile", GetProfile)
+	protected.PUT("/profile", UpdateProfile)
 
 	// Wallet
 	protected.GET("/wallet", GetWalletProfile)

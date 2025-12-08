@@ -123,8 +123,8 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// generate keypair
-	pubKeyPEM, privKeyPEM, err := appCrypto.GenerateKeyPair()
+	// generate keypair (returns both as hex strings)
+	pubKeyHex, privKeyHex, err := appCrypto.GenerateKeyPair()
 	if err != nil {
 		logger.AddSystemLog(c,
 			"register_failed",
@@ -134,8 +134,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// encrypt private key (convert PEM to hex string first)
-	privKeyHex := hex.EncodeToString([]byte(privKeyPEM))
+	// encrypt private key (already hex, pass directly)
 	encryptedPriv, err := appCrypto.EncryptPrivateKey(privKeyHex)
 	if err != nil {
 		logger.AddSystemLog(c,
@@ -146,8 +145,8 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// wallet id = SHA256(publicKeyPEM)
-	h := sha256.Sum256([]byte(pubKeyPEM))
+	// wallet id = SHA256(pubKeyHex)
+	h := sha256.Sum256([]byte(pubKeyHex))
 	walletID := hex.EncodeToString(h[:])
 
 	now := time.Now().UTC()
@@ -158,7 +157,7 @@ func Register(c *gin.Context) {
 		CNIC:             req.CNIC,
 		WalletID:         walletID,
 		PasswordHash:     string(hashed),
-		PublicKey:        pubKeyPEM,
+		PublicKey:        pubKeyHex,
 		EncryptedPrivKey: encryptedPriv,
 		Beneficiaries:    []string{},
 		ZakatDeducted:    0,
