@@ -13,9 +13,13 @@ type ReportSummary = {
 
 export default function Reports() {
   const { user } = useAuth();
+
   const [summary, setSummary] = useState<ReportSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [zakatMsg, setZakatMsg] = useState("");
+  const [zakatBusy, setZakatBusy] = useState(false);
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -37,22 +41,69 @@ export default function Reports() {
     fetchSummary();
   }, []);
 
+  const handleRunZakat = async () => {
+  try {
+    setZakatBusy(true);
+    setZakatMsg("");
+    setError("");
+
+    const res = await api.post("/zakat/run-self");
+    const msg =
+      res.data?.message ||
+      `Zakat run completed.`;
+
+    setZakatMsg(msg);
+
+    // reload summary to reflect updated zakat
+    const sumRes = await api.get("/reports/summary");
+    setSummary(sumRes.data as ReportSummary);
+  } catch (err: any) {
+    console.error("Run zakat error:", err);
+    setError(
+      err?.response?.data?.error ||
+        "Failed to run zakat. Check backend /zakat/run-self."
+    );
+  } finally {
+    setZakatBusy(false);
+  }
+};
+
+
   const formatAmount = (val?: number) =>
     typeof val === "number" ? val.toFixed(4) : "0.0000";
 
   return (
     <div className="main-column">
-
       {/* Header */}
       <div className="glass-card-soft">
-        <h1 className="text-xl font-semibold text-white">Wallet Reports</h1>
-        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-          Overview of your total sent, received and zakat deductions for wallet{" "}
-          <span className="font-mono text-[11px] text-slate-300 break-all">
-            {user?.wallet_id}
-          </span>
-          .
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-semibold text-white">Wallet Reports</h1>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Overview of your total sent, received and zakat deductions for
+              wallet{" "}
+              <span className="font-mono text-[11px] text-slate-300 break-all">
+                {user?.wallet_id}
+              </span>
+              .
+            </p>
+          </div>
+
+          <div className="flex flex-col items-end gap-1">
+            <button
+              onClick={handleRunZakat}
+              disabled={zakatBusy}
+              className="btn-primary text-[11px] px-3 py-1.5"
+            >
+              {zakatBusy ? "Running Zakat..." : "Run Zakat Now"}
+            </button>
+            {zakatMsg && (
+              <span className="text-[11px] text-emerald-300 max-w-xs text-right">
+                {zakatMsg}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {error && (

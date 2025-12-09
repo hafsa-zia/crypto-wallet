@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hafsa-zia/crypto-wallet-backend/internal/middleware"
+	"github.com/hafsa-zia/crypto-wallet-backend/internal/zakat"
 )
 
 func RegisterRoutes(r *gin.Engine) {
@@ -38,7 +39,7 @@ func RegisterRoutes(r *gin.Engine) {
 	protected.POST("/admin/mine", MinePending)
 
 	// Zakat
-	protected.POST("/admin/run-zakat", RunZakatNowHandler)
+	protected.POST("/zakat/run-self", RunSelfZakatHandler)
 	protected.GET("/reports/summary", GetReportsSummary)
 
 	// Logs
@@ -47,9 +48,62 @@ func RegisterRoutes(r *gin.Engine) {
 }
 
 // RunZakatNowHandler handles POST /admin/run-zakat requests.
-func RunZakatNowHandler(c *gin.Context) {
-	// TODO: Implement logic to run zakat now
-	c.JSON(http.StatusOK, gin.H{"message": "Zakat run initiated"})
+// RunZakatNowHandler handles POST /api/admin/run-zakat
+// It creates pending zakat_deduction transactions for all wallets
+// and returns how many were created. To confirm them on-chain,
+// you then mine pending txs via /api/admin/mine.
+// RunSelfZakatHandler handles POST /api/zakat/run-self.
+// It runs zakat (2.5%) for the CURRENT logged-in wallet and creates
+// a "zakat_deduction" transaction with status "pending".
+func RunSelfZakatHandler(c *gin.Context) {
+	walletID := c.GetString("wallet_id")
+	if walletID == "" {
+		if alt := c.GetString("walletID"); alt != "" {
+			walletID = alt
+		} else if alt2 := c.GetString("wallet"); alt2 != "" {
+			walletID = alt2
+		}
+	}
+
+	if walletID == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "wallet id not found in token context",
+		})
+		return
+	}
+
+	txDoc, err := zakat.RunZakatForWallet(c, walletID)
+	if err != nil {
+		// soft errors → 200
+		if err.Error() == "no UTXOs / no balance, zakat not due" ||
+			err.Error() == "balance <= 0, zakat not due" ||
+			err.Error() == "zakat computed as 0, nothing to do" ||
+			err.Error() == "not enough UTXOs to cover zakat" {
+			c.JSON(http.StatusOK, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		// real errors → 500
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "failed to run zakat",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	if txDoc == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "No zakat due for this wallet.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Zakat transaction created as pending. Mine pending transactions to confirm.",
+		"tx":      txDoc,
+	})
 }
 
 // GetBlockByID handles GET /blocks/:id requests.
