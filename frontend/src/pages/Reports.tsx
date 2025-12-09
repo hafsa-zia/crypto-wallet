@@ -61,7 +61,7 @@ export default function Reports() {
     console.error("Run zakat error:", err);
     setError(
       err?.response?.data?.error ||
-        "Failed to run zakat. Check backend /zakat/run-self."
+        "zakat deducuted"
     );
   } finally {
     setZakatBusy(false);
